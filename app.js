@@ -9,6 +9,7 @@ import { VERSION, BUILT_AT } from './src/version.js';
 import { formToSession, sessionToForm, sessionSummary, painText } from './src/session.js';
 import { buildPack, SCOPES } from './src/analysis-pack.js';
 import { backupDue } from './src/backup.js';
+import { isDate, fmtDate } from './src/dates.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -202,7 +203,10 @@ function renderRecent() {
   if (!logs.length) { card.hidden = true; return; }
   card.hidden = false;
   const h = handleKg();
-  const rows = logs.slice(-5).reverse().map((l, k) => {
+  // 重画前记住折叠状态，不然填完感受一刷新就自己收起来了
+  const fold = card.querySelector('details');
+  const wasOpen = !!(fold && fold.open);
+  const rows = logs.slice().reverse().map((l, k) => {
     const index = logs.length - 1 - k;
     const plan = PLAN[l.seq - 1];
     const sum = sessionSummary(l.session);
@@ -213,9 +217,9 @@ function renderRecent() {
       const w = e.level == null ? '' : ` ${fmtKg(levels(h)[e.level].kg)}kg`;
       return `${ex.name.replace('（选做）', '')}${w} ${e.reps.join('/')}`;
     }).join('　');
-    return `<div class="rc-item"><div class="rc"><span class="rc-date">${esc(l.at.slice(5))}</span>
-      <span class="rc-detail">第 ${l.seq} 次 · ${plan ? plan.kind : ''} 课${l.legLite ? ' · 腿部减量' : ''}</span>
-      <button class="rc-edit" data-index="${index}">${l.session ? '改感受' : '填感受'}</button></div>
+    return `<div class="rc-item"><div class="rc-when">${esc(fmtDate(l.at))}</div>
+      <div class="rc"><span class="rc-detail">第 ${l.seq} 次 · ${plan ? plan.kind : ''} 课${l.legLite ? ' · 腿部减量' : ''}</span>
+      <button class="rc-edit" data-index="${index}">${l.session ? '改感受/日期' : '填感受/改日期'}</button></div>
       <div class="lg">${esc(detail)}</div>
       ${sum || note ? `<div class="rc-run">${esc([sum, note].filter(Boolean).join(' · '))}</div>` : ''}
       ${pain ? `<div class="rc-pain">疼痛：${esc(pain)}</div>` : ''}</div>`;
@@ -227,8 +231,11 @@ function renderRecent() {
     const w = v.level < 0 ? '' : `${fmtKg(levels(h)[v.level].kg)} kg × `;
     return `${ex.name.replace('（选做）', '')} ${w}${v.reps}${unitOf(ex)}`;
   }).join('　');
-  card.innerHTML = `<h2 style="font-size:15px;margin-bottom:6px">最近完成</h2>${rows}
-    <p class="muted-note"><b>目前最好：</b>${esc(bestRows)}</p>`;
+  const last = logs[logs.length - 1];
+  card.innerHTML = `<details class="fold"${wasOpen ? ' open' : ''}>
+    <summary>✅ 最近完成 <span class="rc-sum">共 ${logs.length} 次 · 上次 ${esc(fmtDate(last.at))}</span></summary>
+    ${rows}
+    <p class="muted-note"><b>目前最好：</b>${esc(bestRows)}</p></details>`;
   card.querySelectorAll('.rc-edit').forEach((b) => {
     b.onclick = () => openSessionForm(Number(b.dataset.index));
   });
@@ -241,8 +248,9 @@ function openSessionForm(index) {
   const card = $('sessCard');
   card.hidden = false;
   card.innerHTML = `
-    <div class="t-head"><span>第 ${l.seq} 次 · ${esc(l.at.slice(5))} · 这次感受</span>
+    <div class="t-head"><span>第 ${l.seq} 次 · 这次感受</span>
       <button class="t-x" id="seCloseBtn" aria-label="关闭">✕</button></div>
+    <label class="se-date">训练日期 <input type="date" id="seDate" value="${esc(l.at)}" max="${today()}"></label>
     ${sessionFields(sessionToForm(l.session), 'se')}
     <p class="form-err" id="seErr" hidden></p>
     <div class="t-ctrls">
@@ -254,16 +262,21 @@ function openSessionForm(index) {
   $('seCloseBtn').onclick = close;
   $('seCancelBtn').onclick = close;
   $('seSaveBtn').onclick = () => {
+    const date = $('seDate').value;
     const { session, errors } = formToSession(readSessionForm('se'));
+    if (!isDate(date)) errors.push('日期不对');
+    else if (date > today()) errors.push('日期不能晚于今天');
     if (errors.length) {
       $('seErr').textContent = errors.join('；');
       $('seErr').hidden = false;
       return;
     }
+    const dateChanged = date !== l.at;
+    if (dateChanged) store.setDate(index, date);
     store.setSession(index, session);
     close();
     render();
-    toast(session ? '感受已保存 ✓' : '没填任何内容');
+    toast(session || dateChanged ? '已保存 ✓' : '没填任何内容');
   };
   if ($('seDelBtn')) $('seDelBtn').onclick = () => {
     if (!confirm('删掉这次的感受？训练记录本身保留。')) return;

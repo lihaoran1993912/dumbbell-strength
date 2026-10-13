@@ -6,6 +6,7 @@
 import { EXERCISES } from './plan.js';
 import { clampLevel } from './gear.js';
 import { sanitizeSession } from './session.js';
+import { isDate } from './dates.js';
 
 export const STORAGE_KEY = 'dumbbell-strength-v1';
 export const DRAFT_KEY = 'dumbbell-strength-draft-v1';
@@ -133,6 +134,15 @@ export function createStore(storage) {
       const clean = sanitizeSession(session);
       if (clean) log.session = clean;
       else delete log.session;
+      persist();
+      return snapshot();
+    },
+
+    // 改某次训练的日期（练完忘了点、第二天才补点时用）。非法日期不改。
+    setDate(index, date) {
+      const log = state.logs[index];
+      if (!log || !isDate(date)) return snapshot();
+      log.at = date;
       persist();
       return snapshot();
     },

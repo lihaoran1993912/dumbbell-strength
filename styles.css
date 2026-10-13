@@ -311,6 +311,12 @@ input[type="date"] {
   font-size: 13px;
 }
 .rc:first-of-type { border-top: none; }
+.rc-when { padding-top: 8px; font-size: 13px; color: var(--clay-dark); font-weight: 700; font-variant-numeric: tabular-nums; }
+.rc-sum { font-weight: 400; font-size: 12.5px; color: var(--ink-faint); }
+#recentCard .fold > summary { margin-bottom: 0; }
+#recentCard .fold[open] > summary { margin-bottom: 4px; }
+.se-date { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); margin: 4px 0 10px; }
+.se-date input { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); }
 .rc-date { flex: none; width: 42px; color: var(--clay-dark); font-weight: 700; font-variant-numeric: tabular-nums; }
 .rc-txt { flex: none; color: var(--ink-faint); }
 .rc-detail { flex: 1; min-width: 0; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -328,8 +334,8 @@ input[type="date"] {
   font-weight: 600;
   cursor: pointer;
 }
-.rc-run { padding: 0 0 7px 50px; font-size: 12px; color: var(--ok); font-variant-numeric: tabular-nums; }
-.rc-pain { padding: 0 0 7px 50px; margin-top: -4px; font-size: 12px; color: var(--clay); font-weight: 600; }
+.rc-run { padding: 0 0 7px 0; font-size: 12px; color: var(--ok); font-variant-numeric: tabular-nums; }
+.rc-pain { padding: 0 0 7px 0; margin-top: -4px; font-size: 12px; color: var(--clay); font-weight: 600; }
 .field-hint { font-size: 11.5px; color: var(--ink-faint); line-height: 1.4; padding-top: 4px; }
 
 /* ── 跑步数据 / 个人信息表单 ─────────────── */
@@ -536,7 +542,7 @@ textarea {
 #foodBody table { width: 100%; border-collapse: collapse; font-size: 13px; color: var(--ink-soft); }
 #foodBody td { padding: 5px 0; border-top: 1px solid var(--line); }
 #foodBody td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
-.lg { font-size: 12px; color: var(--ink-faint); padding: 0 0 8px 50px; line-height: 1.6; }
+.lg { font-size: 12px; color: var(--ink-faint); padding: 0 0 8px 0; line-height: 1.6; }
 .rest {
   position: fixed; left: 50%; transform: translateX(-50%);
   bottom: calc(var(--safe-bottom) + 14px);
