@@ -1,6 +1,6 @@
 # 哑铃力量 · 配合半马
 
-手机打开：https://lihaoran1993912.github.io/run-half-marathon/strength/
+手机打开：https://lihaoran1993912.github.io/dumbbell-strength/
 （Safari 打开 → 分享 → 添加到主屏幕，之后离线也能用）
 
 - 16 周 / 32 次，A、B 课轮换，放在不跑步的那天；按顺序做，忙了顺延（跟半马打卡一样）
