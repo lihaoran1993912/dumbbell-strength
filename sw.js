@@ -1,6 +1,6 @@
 // Service Worker：把整个 App 缓存下来，装到主屏幕后彻底离线可用。
 // 改了任何前端文件，就把版本号 +1，并同步 src/version.js（test/version.test.js 会检查）。
-const CACHE = 'dumbbell-strength-v3';
+const CACHE = 'dumbbell-strength-v4';
 
 const ASSETS = [
   './',

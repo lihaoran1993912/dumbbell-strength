@@ -1,6 +1,6 @@
 // 页面渲染 + 事件。计算都在 src/ 的纯函数里（有测试），这里只管画和点。
 
-import { PLAN, EXERCISES, WARMUP, COOLDOWN, TOTAL_WEEKS, applyLegLite } from './src/plan.js';
+import { PLAN, EXERCISES, WARMUP, COOLDOWN, KNEE_HIP, TOTAL_WEEKS, applyLegLite } from './src/plan.js';
 import { levels, describeLevel, fmtKg } from './src/gear.js';
 import { nextSession, percent, recommend, bests } from './src/progress.js';
 import { createStore } from './src/store.js';
@@ -79,6 +79,10 @@ function renderNext() {
     <details class="warm"><summary>先热身 5 分钟</summary><ol>${WARMUP.map((w) => `<li>${esc(w)}</li>`).join('')}</ol></details>
     <div id="exList">${exHtml}</div>
     <div class="cool">
+      <div class="cool-head">护膝：髋外侧 3 个动作 · 5 分钟（徒手）</div>
+      ${kneeHipHtml()}
+    </div>
+    <div class="cool">
       <div class="cool-head">练完拉伸 5 分钟</div>
       ${COOLDOWN.map((c) => `<details><summary>${esc(c.name)} · ${esc(c.time)}</summary><ul>${c.cues.map((x) => `<li>${esc(x)}</li>`).join('')}${c.knee ? `<li class="knee">${esc(c.knee)}</li>` : ''}</ul></details>`).join('')}
     </div>
@@ -89,6 +93,11 @@ function renderNext() {
     </div>
     <button class="btn block" id="finishBtn">完成本次训练</button>
     ${logs.length ? '<button class="undo" id="undoBtn">↶ 撤销上一次</button>' : ''}`;
+}
+
+// 护膝 3 个动作的下拉要领；训练卡片和首页的「护膝」折叠区共用。
+function kneeHipHtml() {
+  return KNEE_HIP.map((k) => `<details><summary>${esc(k.name)} · ${esc(k.dose)}</summary><ul>${k.cues.map((x) => `<li>${esc(x)}</li>`).join('')}${k.knee ? `<li class="knee">${esc(k.knee)}</li>` : ''}</ul></details>`).join('');
 }
 
 function exerciseHtml(it, logs, s, saved) {
@@ -558,6 +567,7 @@ paintScope();
 $('packCopyBtn').addEventListener('click', copyPack);
 
 $('verFoot').textContent = `${VERSION} · ${BUILT_AT}`;
+$('kneeBody').innerHTML = kneeHipHtml(); // 固定内容，只画一次，免得重画时把展开的要领收起来
 renderSettings();
 render();
 

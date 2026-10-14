@@ -532,6 +532,7 @@ textarea {
 .cool summary { cursor: pointer; }
 .cool ul { margin: 4px 0 0; padding-left: 18px; font-size: 12.5px; }
 .cool .knee { color: var(--clay-dark); }
+.knee-intro { font-size: 13px; color: var(--ink-soft); margin: 8px 0 4px; }
 .fold > summary { cursor: pointer; list-style: none; font-weight: 700; font-size: 15px; }
 .fold > summary::-webkit-details-marker { display: none; }
 .fold > summary::after { content: " ▾"; color: var(--ink-faint); }

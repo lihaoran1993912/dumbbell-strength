@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { levels, describeLevel, MAX_LEVEL, clampLevel } from '../src/gear.js';
-import { PLAN, EXERCISES, COOLDOWN, applyLegLite } from '../src/plan.js';
+import { PLAN, EXERCISES, COOLDOWN, KNEE_HIP, applyLegLite } from '../src/plan.js';
 import { recommend, nextSession, percent, lastEntry, bests } from '../src/progress.js';
 import { proteinTarget, powderFor } from '../src/nutrition.js';
 
@@ -66,6 +66,16 @@ test('练完拉伸：每个都有名字、时长和至少 3 条做法（下拉�
     assert.ok(c.time, `${c.name} 缺时长`);
     assert.ok(Array.isArray(c.cues) && c.cues.length >= 3, `${c.name} 做法太少`);
   }
+});
+
+test('护膝：髋外侧 3 个动作，每个有名字、量和至少 3 条要领，单腿浅蹲提醒膝盖对第二个脚趾', () => {
+  assert.equal(KNEE_HIP.length, 3);
+  for (const k of KNEE_HIP) {
+    assert.ok(k.name, '缺名字');
+    assert.ok(k.dose, `${k.name} 缺组数次数`);
+    assert.ok(Array.isArray(k.cues) && k.cues.length >= 3, `${k.name} 要领太少`);
+  }
+  assert.ok(KNEE_HIP.some((k) => k.cues.join('').includes('第二个脚趾')));
 });
 
 test('腿部减量：只减下肢，最少留 1 组', () => {
